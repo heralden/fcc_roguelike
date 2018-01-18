@@ -1,24 +1,24 @@
 const wall = '#';
 const space = '.';
 
-export function array2d(width, height, char) {
+function array2d(width, height, char) {
   return Array(height).fill(
     Array(width).fill(char)
   );
 }
 
-export function copy2d(arr2d) {
+function copy2d(arr2d) {
   return arr2d.map(arr => arr.slice());
 }
 
-export function data2d(arr2d) {
+function data2d(arr2d) {
   const ylim = arr2d.length;
   const xlim = arr2d[0].length;
   const squares = ylim * xlim;
   return { ylim, xlim, squares };
 }
 
-export function boundaryCoords(room, coord) {
+function boundaryCoords(room, coord) {
   const roomData = data2d(room);
   const boundaryRoom = newRoom(
     roomData.xlim + 2,
@@ -32,7 +32,7 @@ export function boundaryCoords(room, coord) {
   return coords;
 }
 
-export function transposeRoom(room, coord, area) {
+function transposeRoom(room, coord, area) {
   const areaData = data2d(area);
   const roomData = data2d(room);
   // Do not overlap area edges or boundaries
@@ -59,16 +59,44 @@ export function transposeRoom(room, coord, area) {
   return newArea;
 }
 
-export function newRoom(width, height) {
+function newRoom(width, height) {
   return array2d(width, height, space);
 }
 
-export function newArea(width, height) {
+function newArea(width, height) {
   return array2d(width, height, wall);
 }
 
-export function randomRoom() {
-  const width = Math.floor(Math.random() * 5) + 2;
-  const height = Math.floor(Math.random() * 5) + 2;
+function randomNumber(min, max) {
+  const factor = max - min;
+  return Math.floor(
+    Math.random() * factor
+  ) + min;
+}
+
+function randomRoom() {
+  const width = randomNumber(2, 7);
+  const height = randomNumber(2, 7);
   return newRoom(width, height);
 }
+
+function randomCoord(area) {
+  const data = data2d(area);
+  return {
+    y: randomNumber(1, data.ylim - 1),
+    x: randomNumber(1, data.xlim - 1)
+  };
+}
+
+function fillArea(area, attempts) {
+  for (let i = 0; i < attempts; i++) {
+    area = transposeRoom(
+      randomRoom(),
+      randomCoord(area),
+      area
+    );
+  }
+  return area;
+}
+
+export { array2d, transposeRoom, newRoom, newArea };
