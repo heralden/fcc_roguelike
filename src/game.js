@@ -74,6 +74,10 @@ function randomNumber(min, max) {
   ) + min;
 }
 
+function percentChance(perc) {
+  return Math.random() < (perc / 100);
+}
+
 function randomRoom() {
   const width = randomNumber(2, 7);
   const height = randomNumber(2, 7);
@@ -114,6 +118,33 @@ function addMaze(area) {
 
     if (allWalls) {
       return space;
+    } else {
+      return char;
+    }
+
+  }));
+}
+
+function addDoors(area) {
+  const data = data2d(area);
+
+  return area.map((row, y) => row.map((char, x) => {
+
+    if (y < 1 || y >= data.ylim - 1) return char;
+    if (x < 1 || x >= data.xlim - 1) return char;
+
+    const horizontal = [
+      { y, x: x - 1 }, // west
+      { y, x: x + 1 }  // east
+    ].every(c => area[c.y][c.x] === space);
+
+    const vertical = [
+      { y: y - 1, x }, // north
+      { y: y + 1, x }  // south
+    ].every(c => area[c.y][c.x] === space);
+
+    if (horizontal || vertical) {
+      return percentChance(20) ? space : char;
     } else {
       return char;
     }
