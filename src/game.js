@@ -88,7 +88,7 @@ function randomCoord(area) {
   };
 }
 
-function fillArea(area, attempts) {
+function addRooms(area, attempts) {
   for (let i = 0; i < attempts; i++) {
     area = transposeRoom(
       randomRoom(),
@@ -97,6 +97,28 @@ function fillArea(area, attempts) {
     );
   }
   return area;
+}
+
+function addMaze(area) {
+  const data = data2d(area);
+
+  return area.map((row, y) => row.map((char, x) => {
+
+    if (y < 1 || y >= data.ylim - 1) return char;
+    if (x < 1 || x >= data.xlim - 1) return char;
+
+    const allWalls = boundaryCoords(
+      newRoom(1, 1),
+      { y, x }
+    ).every(c => area[c.y][c.x] === wall);
+
+    if (allWalls) {
+      return space;
+    } else {
+      return char;
+    }
+
+  }));
 }
 
 export { array2d, transposeRoom, newRoom, newArea };
